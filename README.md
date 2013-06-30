@@ -41,7 +41,7 @@ With options (see below for details):
 
 ## Styling
 
-Insertions are wrapped in **&lt;ins&gt;** Deletions are wrapped **&lt;del&gt;**.  Add the following CSS for much nicer looking output:
+Insertions are wrapped in **&lt;ins&gt;**; Deletions are wrapped **&lt;del&gt;**.  Add the following CSS for much nicer looking output:
 
     ins {
         text-decoration: none;
