@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["kent@openissues.ca"]
   spec.description   = %q{Performs a diff on two HTML inputs, outputting the result as HTML.}
   spec.summary       = %q{Performs a diff on two HTML inputs, outputting the result as HTML.}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/kmewhort/fast_html_diff"
   spec.license       = "BSD"
 
   spec.files         = `git ls-files`.split($/)
