@@ -26,21 +26,22 @@ Basic usage:
 
 With options (see below for details):
 
-    result_html_str = FastHtmlDiff::DiffBuilder.new(string_a,string_b, simplify_html: true, try_hard: true).build
+    result_html_str = FastHtmlDiff::DiffBuilder.new(string_a,string_b,
+                                                    simplify_html: true, try_hard: true).build
 
 ## Options
 
-* ignore_punctuation: boolean [default: true]
-* case_insensitive: boolean [default: true]
-* tokenizer_regexp: regexp [default: %r{([^A-Za-z0-9]+)};] Make sure to include the outer parentheses. This option overrides any "ignore_punctuation" setting.
-* diff_cmd: str [default: 'diff']. May be useful if you only have diff available through cygwin or a WWindows port.
-* try_hard: boolean [default: false]. Try hard to find smaller-length matches (at a bit of a performance cost).
-* simplify_html: boolean [default: false]. Strips HTML to only the permitted tags, giving better output format where the structure of the two inputs differ greatly.
-* simplified_html_tags: array of strings [default %w(html body p strong em ul ol li)]
+* **ignore_punctuation:** boolean [default: true]
+* **case_insensitive:** boolean [default: true]
+* **tokenizer_regexp:** regexp [default: %r{([^A-Za-z0-9]+)};] Make sure to include the outer parentheses. This option overrides any "ignore_punctuation" setting.
+* **diff_cmd:** str [default: 'diff']. May be useful if you only have diff available through cygwin or a Windows port.
+* **try_hard:** boolean [default: false]. Try hard to find smaller-length matches (at a bit of a performance cost).
+* **simplify_html:** boolean [default: false]. Strips HTML to only the permitted tags, giving better output format where the structure of the two inputs differ greatly.
+* **simplified_html_tags:** array of strings [default %w(html body p strong em ul ol li)]
 
 ## Styling
 
-Insertions are wrapped in "<ins>"; Deletions are wrapped "<del>".  Add the following CSS for much nicer looking output:
+Insertions are wrapped in **&lt;ins&gt;** Deletions are wrapped **&lt;del&gt;**.  Add the following CSS for much nicer looking output:
 
     ins {
         text-decoration: none;
