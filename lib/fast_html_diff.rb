@@ -4,9 +4,7 @@ require 'nokogiri'
 module FastHtmlDiff
   class DiffBuilder
     def initialize(html_str_a,html_str_b,config={})
-      @a = html_str_a
-      @b = html_str_b
-
+      # merge specified config with defaults
       @config = default_config.merge(config)
       if config[:tokenizer_regexp].nil?
         if @config[:ignore_punctuation]
@@ -19,14 +17,13 @@ module FastHtmlDiff
       @word_list = {}
       @insertions = []
       @deletions = []
+      @matches = []
       @split_nodes = Hash.new
       @insertion_nodes = Hash.new
-    end
 
-    def build
-      # parse, tokenize and index
-      @a = Nokogiri::HTML(@a)
-      @b = Nokogiri::HTML(@b)
+      # parse, tokenize and index the input documents
+      @a = Nokogiri::HTML(html_str_a)
+      @b = Nokogiri::HTML(html_str_b)
       if @config[:simplify_html]
         simplify_html(@a)
         simplify_html(@b)
@@ -36,10 +33,38 @@ module FastHtmlDiff
 
       # find the insertions and deletions
       diff_words
+    end
 
-      # update doc a with tags for the insertions and deletions
+    # build output HTML
+    def build
+      # update doc_a with tags for the insertions and deletions
       update_dom
       @a.to_html
+    end
+
+    # output statistics on insertions and deletions
+    def statistics
+      result = {
+          insertions: { segments: 0, words: 0, chars: 0 },
+          deletions: { segments: 0, words: 0, chars: 0 },
+          matches: { segments: 0, words: 0, chars: 0}
+      }
+      @insertions.each do |i|
+        result[:insertions][:segments] += 1
+        result[:insertions][:words] += i[:b_end] - i[:b_start] + 1
+        result[:insertions][:chars] += @word_list[:b][i[:b_end]][:end_pos] - @word_list[:b][i[:b_start]][:start_pos]
+      end
+      @deletions.each do |i|
+        result[:deletions][:segments] += 1
+        result[:deletions][:words] += i[:a_end] - i[:a_start] + 1
+        result[:deletions][:chars] += @word_list[:a][i[:a_end]][:end_pos] - @word_list[:a][i[:a_start]][:start_pos]
+      end
+      @matches.each do |i|
+        result[:matches][:segments] += 1
+        result[:matches][:words] += i[:a_end] - i[:a_start] + 1
+        result[:matches][:chars] += @word_list[:a][i[:a_end]][:end_pos] - @word_list[:a][i[:a_start]][:start_pos]
+      end
+      result
     end
 
     private
@@ -140,12 +165,21 @@ module FastHtmlDiff
             prev_operation = :deletion
           end
           doca_i += 1
+        else
+          if prev_operation == :match
+            @matches.last[:a_end] = doca_i
           else
             if prev_operation == :insertion
               @insertions.last[:next_operation] = :match
             elsif prev_operation == :deletion
               @deletions.last[:next_operation] = :match
             end
+
+            @matches << {
+                a_start: doca_i,
+                a_end: doca_i
+            }
+          end
 
           prev_operation = :match
           doca_i += 1
